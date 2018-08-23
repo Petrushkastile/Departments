@@ -44,7 +44,7 @@
                         <th>Date of birth</th>
                         <th>Salary</th>
                         <th>Email</th>
-                        <th width="200px">Actions</th>
+                        <th>Actions</th>
                     </tr>
                     <c:forEach var="emploee" items="${emploees}">
                         <tr>

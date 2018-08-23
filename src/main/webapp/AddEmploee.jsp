@@ -30,6 +30,11 @@
         <strong><c:out value="${serviceException.message}"/></strong>
     </div>
 </c:if>
+<c:if test="${not empty message }">
+    <div class="alert alert-success">
+        <strong><c:out value="${message}"/></strong>
+    </div>
+</c:if>
 <div class="row">
     <div class="col-md-4"></div>
     <div class="col-md-4">

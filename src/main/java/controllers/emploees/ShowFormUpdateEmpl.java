@@ -24,6 +24,7 @@ public class ShowFormUpdateEmpl extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding( "UTF-8" );
         EmploeeService emploeeService = new EmploeeService();
         DepartmentService departmentService = new DepartmentService();
 

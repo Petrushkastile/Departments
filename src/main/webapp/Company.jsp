@@ -11,14 +11,14 @@
 </head>
 <body>
 <c:if test="${not empty serviceException.message}">
-<div class="alert alert-danger">
-    <strong><c:out value="${serviceException.message}"/></strong>
-</div>
+    <div class="alert alert-danger">
+        <strong><c:out value="${serviceException.message}"/></strong>
+    </div>
 </c:if>
-<c:if test="${not empty departments }">
-    <h2 align="center">Departments</h2>
-    <div class="col-md-2"></div>
-    <div align="center" class="col-md-8">
+<h2 align="center">Departments</h2>
+<div class="col-md-2"></div>
+<div align="center" class="col-md-8">
+    <c:if test="${not empty departments }">
         <table class="table">
             <tr>
                 <th>Id</th>
@@ -54,23 +54,26 @@
                 </tr>
             </c:forEach>
         </table>
+    </c:if>
+    <c:if test="${empty departments}">
+        <h2 class="text-warning">There are no departments in the company </h2>
+    </c:if>
+</div>
+<div class="col-md-2"></div>
+<div class="row">
+    <div class="col-md-4">
     </div>
-    <div class="col-md-2"></div>
-    <div class="row">
-        <div class="col-md-4">
-        </div>
-        <div class="col-md-2">
-            <form action="/newDepartmentForm" method="get">
-                <button class="btn btn-primary" type="submit" value="Create new department">Create new department</button>
-            </form>
-        </div>
-        <div class="col-md-2">
-            <form action="/allEmploees" method="get">
-                <button class="btn btn-primary"type="submit" value="Show company emploees">Show company emploees</button>
-            </form>
-        </div>
-        <div class="col-md-4"></div>
+    <div class="col-md-2">
+        <form action="/newDepartmentForm" method="get">
+            <button class="btn btn-primary" type="submit" value="Create new department">Create new department</button>
+        </form>
     </div>
-</c:if>
+    <div class="col-md-2">
+        <form action="/allEmploees" method="get">
+            <button class="btn btn-primary" type="submit" value="Show company emploees">Show company emploees</button>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
 </body>
 </html>

@@ -1,7 +1,6 @@
 package service;
 
 import dao.DepartmentDao;
-import dao.EmploeeDao;
 import exception.DaoException;
 import exception.ServiceException;
 import model.Department;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 
 public class DepartmentService {
-    private EmploeeDao emploeeDao = new EmploeeDao();
     private DepartmentDao departmentDao = new DepartmentDao();
 
     public List<Department> getDepartments() throws ServiceException {

@@ -9,10 +9,6 @@ public final class DateParser {
     public static Date parseDate(String dateBirth) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern( "dd.MM.yyyy" );
-        Date date = null;
-
-            date = format.parse( dateBirth );
-
-        return date;
+        return format.parse( dateBirth );
     }
 }
