@@ -1,9 +1,11 @@
 package service;
 
 import dto.JoinDto;
+import exception.BuilderException;
 import model.Department;
 import model.Emploee;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,14 +38,18 @@ public class Builder {
         return emploee;
     }
 
-    public static Emploee buildEmploeeFromRequest(Map<String, String[]> parameters,int deptId) {
+    public static Emploee buildEmploeeFromRequest(Map<String, String[]> parameters,int deptId) throws BuilderException {
         Emploee emploee = new Emploee();
         if(parameters.containsKey("id")){
             emploee.setId( Integer.parseInt( parameters.get( "id" )[0] ) );
         }
         emploee.setName( parameters.get( "name" )[0] );
         emploee.setSurname( parameters.get( "surname" )[0] );
-        emploee.setBirthDate( DateParser.parseDate( parameters.get( "birthDate" )[0] ) );
+        try{
+        emploee.setBirthDate( DateParser.parseDate( parameters.get( "birthDate" )[0] ) );}
+        catch (ParseException e){
+            throw new BuilderException(e.getMessage());
+        }
         emploee.setSalary( Integer.parseInt( parameters.get( "salary" )[0] ) );
         emploee.setEmail( parameters.get( "email" )[0] );
         emploee.setDepartmentId(deptId);
@@ -74,5 +80,20 @@ public class Builder {
             data.put( keyField, valuefield );
         }
         return data;
+    }
+
+    public static Department buildDepartmentFromRequest(Map<String, String[]> parameters) {
+         Department department=new Department();
+        if(parameters.containsKey("id")){
+            department.setId( Integer.parseInt( parameters.get( "id" )[0] ) );
+        }
+        if(!parameters.containsKey("countEmploees")){
+            department.setCountEmploees( 0 );
+        }
+        if(parameters.containsKey("countEmploees")){
+            department.setCountEmploees(Integer.parseInt( parameters.get( "countEmploees" )[0] ));
+        }
+        department.setName(parameters.get( "name" )[0]  );
+        return department;
     }
 }

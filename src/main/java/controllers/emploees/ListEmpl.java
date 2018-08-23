@@ -1,8 +1,8 @@
 package controllers.emploees;
 
-
-import dao.EmploeeDao;
+import exception.ServiceException;
 import model.Emploee;
+import service.EmploeeService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,11 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "ListEmpl", urlPatterns ="/listEmploee")
+@WebServlet(name = "ListEmpl", urlPatterns = "/listEmploee")
 public class ListEmpl extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,22 +22,24 @@ public class ListEmpl extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        EmploeeDao emploeeDao=new EmploeeDao();
-        request.setCharacterEncoding("UTF-8");
+        EmploeeService emploeeService = new EmploeeService();
+        request.setCharacterEncoding( "UTF-8" );
         int departmentId = Integer.parseInt( request.getParameter( "departmentId" ) );
-        String departmentName=request.getParameter( "departmentName" );
-        List<Emploee> emploees = new ArrayList<>(  );
+        String departmentName = request.getParameter( "departmentName" );
         try {
-            emploees = emploeeDao.getDepartmentEmploees(departmentId);
-        } catch (SQLException e) {
-            e.printStackTrace();
+            List<Emploee> emploees = emploeeService.getDepartmentEmploees( departmentId );
+            if (emploees.isEmpty()) {
+                request.setAttribute( "message", "There are no emploees" );
+            }
+            request.setAttribute( "emploees", emploees );
+            request.setAttribute( "departmentId", departmentId );
+            request.setAttribute( "departmentName", departmentName );
+            doGet( request, response );
+        } catch (ServiceException e) {
+            request.setAttribute( "serviceException", e );
+            request.setAttribute( "departmentId", departmentId );
+            request.setAttribute( "departmentName", departmentName );
+            doGet( request, response );
         }
-        if(emploees.isEmpty()){
-            request.setAttribute( "message","There are no emploees" );
-        }
-        request.setAttribute( "emploees", emploees );
-        request.setAttribute( "departmentId", departmentId);
-        request.setAttribute( "departmentName", departmentName );
-        doGet( request, response );
     }
 }

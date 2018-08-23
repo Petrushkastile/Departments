@@ -31,4 +31,6 @@ public final class Queries {
     public static final String GET_ALL_EMPLOEES ="SELECT id, name, surname, birth, salary, email, department_name AS dept_name FROM emploees LEFT OUTER JOIN departments ON  department_id=dept_id ORDER BY name";
 
     public static final String EMAIL_EXISTS="SELECT EXISTS (SELECT * FROM emploees WHERE email=?)";
+
+    public static final String DEPARTMENT_NAME_EXISTS="SELECT EXISTS (SELECT * FROM departments WHERE department_name=?)";
    }

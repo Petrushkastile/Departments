@@ -1,14 +1,15 @@
 package service;
 
 import dao.EmploeeDao;
+import exception.DaoException;
+import exception.ErrorComparingException;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Validator {
 
-     private EmploeeDao emploeeDao=new EmploeeDao();
+    private EmploeeDao emploeeDao = new EmploeeDao();
 
     private static final String BADNAME = "enter correct name 3-10 chars,only letters, first char must be in upper case";
     private static final String BADSURNAME = "enter correct surname 3-12 chars,only letters, first char must be in upper case";
@@ -17,21 +18,21 @@ public class Validator {
     private static final String BADEMAIL = "incorrect email";
     private static final String USEDEMAIL = "this email already used";
 
-    public Map<String, String> validateEmploee(Map<String, String[]> form) {
+    public Map<String, String> validateEmploee(Map<String, String[]> form) throws ErrorComparingException {
         Map<String, String> emploeeFields = new HashMap<>();
         if (!(!form.get( "name" )[0].isEmpty() && name( form.get( "name" )[0] ))) {
             emploeeFields.put( "name", BADNAME );
         }
-        if (!(!form.get( "surname" )[0].isEmpty()&& surname( form.get( "surname" )[0] ))) {
+        if (!(!form.get( "surname" )[0].isEmpty() && surname( form.get( "surname" )[0] ))) {
             emploeeFields.put( "surname", BADSURNAME );
         }
-        if (!(!form.get( "birthDate" )[0].isEmpty()&& date( form.get( "birthDate" )[0] ))) {
+        if (!(!form.get( "birthDate" )[0].isEmpty() && date( form.get( "birthDate" )[0] ))) {
             emploeeFields.put( "birthDate", BADDATE );
         }
-        if (!(!form.get( "salary" )[0].isEmpty()&& salary( form.get( "salary" )[0] ))) {
+        if (!(!form.get( "salary" )[0].isEmpty() && salary( form.get( "salary" )[0] ))) {
             emploeeFields.put( "salary", BADSALARY );
         }
-        if (!(!form.get( "email" )[0].isEmpty()&& email( form.get( "email" )[0] ))) {
+        if (!(!form.get( "email" )[0].isEmpty() && email( form.get( "email" )[0] ))) {
             emploeeFields.put( "email", BADEMAIL );
         }
         if (!emailUsed( form.get( "email" )[0] )) {
@@ -62,21 +63,19 @@ public class Validator {
 
     private boolean email(String value) {
         String regex = "(?!.*@.*@.*$)(?!.*@.*\\-\\-.*\\..*$)(?!.*@.*\\-\\..*$)(?!.*@.*\\-$)(.*@.+(\\..{1,11})?)";
-       boolean a =value.matches( regex );
-int b =0;
-        return a;
+        return value.matches( regex );
     }
 
-    private boolean emailUsed(String value) {
+    private boolean emailUsed(String value) throws ErrorComparingException {
         boolean result = true;
+
         try {
-            if (emploeeDao.existEmail( value ) == 1) {
+            if (emploeeDao.existEmail( value ) == 1)
                 result = false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+        } catch (DaoException e) {
+            throw new ErrorComparingException( e.getMessage(), e.getCause() );
         }
         return result;
     }
-
 }

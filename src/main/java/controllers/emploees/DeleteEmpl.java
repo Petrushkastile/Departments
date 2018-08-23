@@ -1,7 +1,7 @@
 package controllers.emploees;
 
-import dao.DepartmentDao;
-import dao.EmploeeDao;
+import exception.ServiceException;
+import service.EmploeeService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 
 @WebServlet(name = "DeleteEmpl", urlPatterns = "/deleteEmploee")
 public class DeleteEmpl extends HttpServlet {
@@ -21,24 +20,19 @@ public class DeleteEmpl extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DepartmentDao departmentDao=new DepartmentDao();
-        EmploeeDao emploeeDao=new EmploeeDao();
-
+        EmploeeService emploeeService = new EmploeeService();
         String departmentName = request.getParameter( "departmentName" );
-        int departmentId = Integer.parseInt( request.getParameter( "departmentId" ) );
-        int emploeeId = Integer.parseInt( request.getParameter( "deleteId" ) );
+        String departmentId = request.getParameter( "departmentId" );
         try {
-            emploeeDao.deleteEmploee( emploeeId );
-        } catch (SQLException e) {
-            e.printStackTrace();
+            emploeeService.deleteEmploee( request.getParameter( "deleteId" ), departmentId );
+            request.setAttribute( "departmentName", departmentName );
+            request.setAttribute( "departmentID", departmentId );
+            doGet( request, response );
+        } catch (ServiceException e) {
+            request.setAttribute( "serviceException", e );
+            request.setAttribute( "departmentName", departmentName );
+            request.setAttribute( "departmentID", departmentId );
+            doGet( request, response );
         }
-        try {
-            departmentDao.updateDepartmentCount( departmentId, 0 );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        request.setAttribute( "departmentName", departmentName );
-        request.setAttribute( "departmentID", departmentId );
-        doGet( request, response );
     }
 }

@@ -1,9 +1,10 @@
 package controllers.emploees;
 
-import dao.DepartmentDao;
-import dao.EmploeeDao;
+import exception.ServiceException;
 import model.Department;
 import model.Emploee;
+import service.DepartmentService;
+import service.EmploeeService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,8 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "ShowFormUpdateEmpl", urlPatterns = "/showFormUpdateEmploee")
@@ -25,29 +24,22 @@ public class ShowFormUpdateEmpl extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        EmploeeDao emploeeDao = new EmploeeDao();
-        DepartmentDao departmentDao = new DepartmentDao();
-        List<Department> departments = new ArrayList<>();
-
-        int id = Integer.parseInt( request.getParameter( "updateId" ) );
-        String dptName = request.getParameter( "departmentName" );
-        String dpt = request.getParameter( "departmentId" );
-        Emploee emploee = null;
-        try {
-            emploee = emploeeDao.getEmploee( id );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        EmploeeService emploeeService = new EmploeeService();
+        DepartmentService departmentService = new DepartmentService();
 
         try {
-            departments = departmentDao.getDepartments();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            Emploee emploee = emploeeService.getEmploee( Integer.parseInt( request.getParameter( "updateId" ) ) );
+            List<Department> departments = departmentService.getDepartments();
+            request.setAttribute( "departments", departments );
+            request.setAttribute( "departmentName", request.getParameter( "departmentName" ) );
+            request.setAttribute( "departmentId", request.getParameter( "departmentId" ) );
+            request.setAttribute( "emploee", emploee );
+            doGet( request, response );
+        } catch (ServiceException e) {
+            request.setAttribute( "serviceException", e );
+            request.setAttribute( "departmentName", request.getParameter( "departmentName" ) );
+            request.setAttribute( "departmentId", request.getParameter( "departmentId" ) );
+            doGet( request, response );
         }
-        request.setAttribute( "departments", departments );
-        request.setAttribute( "departmentName", dptName );
-        request.setAttribute( "departmentId", dpt );
-        request.setAttribute( "emploee", emploee );
-        doGet( request, response );
     }
 }

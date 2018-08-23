@@ -18,5 +18,9 @@
 <div>
     <%=exception.getMessage()%>
 </div>
+<div>
+
+
+</div>
 </body>
 </html>

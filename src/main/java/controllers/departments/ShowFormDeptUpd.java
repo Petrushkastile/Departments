@@ -1,7 +1,8 @@
 package controllers.departments;
 
-import dao.DepartmentDao;
+import exception.ServiceException;
 import model.Department;
+import service.DepartmentService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,21 +11,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 
 @WebServlet(name = "ShowFormDeptUpd", urlPatterns = "/showFormUpdateDepartment")
 public class ShowFormDeptUpd extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DepartmentDao departmentDao = new DepartmentDao();
-        int id = Integer.parseInt( request.getParameter( "updateId" ) );
-        Department department=null;
-        try {
-            department = departmentDao.getDepartment( id );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher( "UpdateDepartment.jsp" );
-        request.setAttribute( "department", department );
         dispatcher.forward( request, response );
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        DepartmentService departmentService = new DepartmentService();
+        try {
+            Department department = departmentService.getDepartment( request.getParameter( "updateId" ) );
+            request.setAttribute( "department", department );
+            doGet( request, response );
+        } catch (ServiceException e) {
+            request.setAttribute( "serviceException", e );
+            response.sendRedirect( "/main" );
+        }
     }
 }

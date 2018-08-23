@@ -10,23 +10,44 @@
 <%@ page isELIgnored="false" %>
 <html>
 <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
     <title>Add Department</title>
 </head>
 <body>
 <div>
     <a href="/main">Back</a>
-
 </div>
-<div>
-    <form action="/addDepartment" method="post">
-        <fieldset>
+<c:if test="${not empty serviceException.message}">
+    <div class="alert alert-danger">
+        <strong><c:out value="${serviceException.message}"/></strong>
+    </div>
+</c:if>
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form action="/addDepartment" method="post">
             <legend>New Department:</legend>
-            Department name:<br>
+            <div class="form-group">
+                Department name:
+                <input class="form-control" data-toggle="tooltip"
+                       data-placement="bottom" title="enter only letters 3-10 chars,first letter in uppercase" id="1" required type="text" name="name" value="<c:out value ='${department["name"]}'/>"/>
+                <label class="text-warning" for="1"><c:out value='${errors["name"]}'/><c:out
+                        value='${errors["nameUsed"]}'/></label>
 
-            <input required type="text" name="name" value="<c:out value ='${department.name}'/>"/>
-            <input type="submit" value="Add"/>
-        </fieldset>
-    </form>
+            </div>
+            <button class="btn btn-primary" type="submit" value="Add">Add</button>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+
 </div>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 </body>
 </html>

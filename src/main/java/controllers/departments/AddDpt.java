@@ -1,29 +1,44 @@
 package controllers.departments;
 
-import dao.DepartmentDao;
-import model.Department;
+import exception.ErrorComparingException;
+import exception.ServiceException;
 import service.Builder;
+import service.DepartmentService;
+import service.DepartmentValidator;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.Map;
 
 @WebServlet(name = "AddDpt", urlPatterns = "/addDepartment")
 public class AddDpt extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher( "AddDepartment.jsp" );
+        dispatcher.forward( request, response );
+    }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DepartmentDao departmentDao = new DepartmentDao();
-        request.setCharacterEncoding("UTF-8");
-        String departmentName = request.getParameter( "name" );
-        Department department = Builder.buildDepartment(0,departmentName.trim(),0);
+        DepartmentService departmentService = new DepartmentService();
+        DepartmentValidator validator = new DepartmentValidator();
+        request.setCharacterEncoding( "UTF-8" );
         try {
-            departmentDao.addDepartment( department );
-        } catch (SQLException e) {
-            throw new ServletException( e );
+            Map<String, String> result = validator.validateDepartment( request.getParameterMap() );
+            if (!result.isEmpty()) {
+                request.setAttribute( "errors", result );
+                request.setAttribute( "department", Builder.getData( request.getParameterMap() ) );
+                doGet( request, response );
+            } else {
+                departmentService.addDepartment( request.getParameterMap() );
+                response.sendRedirect( "/main" );
+            }
+        } catch (ServiceException | ErrorComparingException e) {
+            request.setAttribute( "serviceException", e );
+            doGet( request, response );
         }
-        response.sendRedirect( "/main" );
     }
 }
